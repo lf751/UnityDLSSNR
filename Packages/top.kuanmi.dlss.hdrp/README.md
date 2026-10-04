@@ -81,9 +81,8 @@ in player builds. No game-specific scenes or profiles are shipped in this packag
 
 ## Behavior and limits
 
-NR textures use the source RTHandle's per-pass viewport size, including HDRP's
-upscaled resolution. The final copy maps viewport UVs to NR texels and preserves
-source alpha. This keeps both images aligned when dynamic resolution changes.
+NR textures use the camera's post-process screen size. The final copy samples
+the native output using normalized UVs, as in the original integration.
 The **Source Color** input debug mode bypasses native evaluation
 and displays the original tone-mapped input for comparison. Enable HDRP camera
 dithering to reduce final 8-bit display quantization. Higher precision can reduce
@@ -120,23 +119,7 @@ Validated in SCPCB-HDRP with Unity 6000.7.0b2 / HDRP 17.7 / RTX 4060 Ti / D3D12:
   quality have not been validated.
 
 Quality update: the active HDRP asset uses 16-bit post-process buffers. The
-experimental output blend has been removed; RGB comes directly from NR.
+experimental output blend and subsequent viewport sizing correction have been
+removed. The original NR allocation and normalized-UV copy path are restored.
 The reported dark-scene screenshot has not been reproduced as a controlled
 before/after capture for the precision change.
-
-Viewport fix: the camera's mutable post-process size can still describe the
-pre-upscale image when the After Post Process pass executes. Allocating NR from
-that size produced an inset image when render scale was below 100%. The adapter
-now uses HDRP's per-pass RTHandle viewport and maps the output through viewport
-UVs. A GPU regression check uses a 192-pixel source allocation, a 128-pixel
-viewport, and a 90-pixel NR texture; direct NR output covers the full viewport
-and preserves source alpha. Unity compilation and
-shader diagnostics passed. Live NR reported a 1585 x 823 context matching its
-display viewport, evaluation success `1`, zero dropped streams, and device
-removed reason `0`.
-
-To repeat the copy regression check with the Unity CLI and this package loaded:
-
-```powershell
-unity command run_script --format json -- --file "D:/Path/To/UnityDLSSNR/Tools/VerifyHdrpOutputCopy.cs" --entry Main
-```

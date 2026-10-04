@@ -60,17 +60,12 @@ namespace UnityRhi.Dlss.Hdrp
                     return;
                 }
 
-                // HDRP snapshots the post-upscale viewport into these handles for
-                // this pass. HDCamera.postProcessScreenSize is reset to the pre-upscale
-                // size before RenderGraph executes and is not authoritative here.
-                var viewport = source.rtHandleProperties.currentViewportSize;
-                int width = Mathf.Max(1, viewport.x);
-                int height = Mathf.Max(1, viewport.y);
+                int width = Mathf.Max(1, (int)hdCamera.postProcessScreenSize.x);
+                int height = Mathf.Max(1, (int)hdCamera.postProcessScreenSize.y);
                 var properties = new MaterialPropertyBlock();
                 properties.SetTexture("_DlssNrSource", source);
                 properties.SetVector("_DlssNrColorScale", source.rtHandleProperties.rtHandleScale);
                 properties.SetInt("_DlssNrDebugMode", (int)settings.DebugMode);
-                properties.SetVector("_DlssNrOutputSize", new Vector4(width, height, 1f / width, 1f / height));
                 properties.SetVector("_DlssNrMotionScale", new Vector4(-0.5f * width * settings.MotionVectorScale.x,
                     -0.5f * height * settings.MotionVectorScale.y, settings.DebugMotionRange, settings.DebugDepthRange));
 

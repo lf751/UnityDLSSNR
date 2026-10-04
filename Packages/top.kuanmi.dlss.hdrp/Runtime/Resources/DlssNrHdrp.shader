@@ -11,7 +11,6 @@ Shader "Hidden/UnityRHI/DLSS-NR/HDRP"
     float4 _DlssNrColorScale;
     float4 _DlssNrMotionScale;
     int _DlssNrDebugMode;
-    float4 _DlssNrOutputSize;
 
     struct Attributes { uint vertexID : SV_VertexID; UNITY_VERTEX_INPUT_INSTANCE_ID };
     struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
@@ -55,12 +54,7 @@ Shader "Hidden/UnityRHI/DLSS-NR/HDRP"
     }
     float4 Copy(Varyings input) : SV_Target
     {
-        // Map viewport UV to the NR allocation, not destination SV_POSITION.
-        // This also stays aligned if HDRP's destination allocation/viewport changes.
-        float4 original = ReadColor(input.uv);
-        uint2 pixel = min(uint2(input.uv * _DlssNrOutputSize.xy), uint2(_DlssNrOutputSize.xy) - 1);
-        float4 processed = LOAD_TEXTURE2D(_DlssNrOutput, pixel);
-        return float4(processed.rgb, original.a);
+        return SAMPLE_TEXTURE2D_LOD(_DlssNrOutput, s_linear_clamp_sampler, input.uv, 0);
     }
     float4 DebugInputs(Varyings input) : SV_Target
     {
