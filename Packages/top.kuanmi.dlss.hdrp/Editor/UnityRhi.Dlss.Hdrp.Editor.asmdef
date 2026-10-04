@@ -1,0 +1,6 @@
+{
+  "name": "UnityRhi.Dlss.Hdrp.Editor",
+  "references": ["UnityRhi.Dlss.Hdrp", "UnityRhi.Runtime", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.HighDefinition.Runtime"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

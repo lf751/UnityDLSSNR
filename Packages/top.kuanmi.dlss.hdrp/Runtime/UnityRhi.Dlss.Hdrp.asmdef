@@ -1,0 +1,6 @@
+{
+  "name": "UnityRhi.Dlss.Hdrp",
+  "rootNamespace": "UnityRhi.Dlss.Hdrp",
+  "references": ["UnityRhi.Runtime", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.HighDefinition.Runtime"],
+  "autoReferenced": true
+}

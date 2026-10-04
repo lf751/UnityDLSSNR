@@ -1,0 +1,11 @@
+{
+  "name": "top.kuanmi.dlss.hdrp",
+  "version": "0.1.0",
+  "displayName": "UnityRHI DLSS Neural Rendering for HDRP",
+  "description": "HDRP SDR custom post-process adapter for UnityRHI DLSS Neural Rendering.",
+  "unity": "6000.7",
+  "dependencies": {
+    "com.unity.render-pipelines.high-definition": "17.7.0",
+    "top.kuanmi.unityrhi": "1.0.0"
+  }
+}

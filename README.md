@@ -9,6 +9,10 @@ This repository contains the managed UnityRHI package, its Windows x64 native
 runtime, and a Unity 6.3 URP integration for DLSS Super Resolution, DLSS Frame
 Generation, and DLSS 5 Neural Rendering, with XR support for SR and NR.
 
+The **HDRP branch** also includes a Unity 6.7 / HDRP 17.7 custom post-process
+integration for DLSS Neural Rendering on SDR, non-XR Game cameras. See the
+[HDRP package documentation](Packages/top.kuanmi.dlss.hdrp/README.md).
+
 ![DLSS Neural Rendering running in Unity](01.png)
 
 ## Repository layout
@@ -18,6 +22,8 @@ Generation, and DLSS 5 Neural Rendering, with XR support for SR and NR.
 | `Packages/top.kuanmi.unityrhi` | UnityRHI C# runtime, editor tools, command stream, interop, and shader importer |
 | `Packages/top.kuanmi.unityrhi.native` | Source layout for the Windows x64 native UPM package |
 | `Packages/top.kuanmi.dlss.urp` | DLSS Super Resolution (IUpscaler), DLSS Frame Generation, and DLSS 5 Neural Rendering for Unity 6.3 URP |
+| `Packages/top.kuanmi.dlss.hdrp` | DLSS Neural Rendering custom post-process for Unity 6.7 / HDRP 17.7 |
+| `Tools/fix_hdrp_command_buffers.py` | Reviewed Unity 6.7 command-buffer generator corrections |
 | `RenderingPlugin` | C++ sources and CMake project for UnityRHI, NRIPlugin, and supporting native libraries |
 | `1-Deploy.bat` | Generates the Visual Studio 2022 x64 build files in `_Build` |
 | `2-Build.bat` | Builds the native projects into `_Bin/<Configuration>` |
@@ -89,7 +95,8 @@ Neural Rendering will not be available.
    `Packages/top.kuanmi.unityrhi.native`.
 2. Add or copy `Packages/top.kuanmi.unityrhi` into the target project.
 3. For DLSS Super Resolution, Frame Generation and/or Neural Rendering, also add or copy
-   `Packages/top.kuanmi.dlss.urp`.
+   `Packages/top.kuanmi.dlss.urp` for URP. For Neural Rendering in HDRP, add or copy
+   `Packages/top.kuanmi.dlss.hdrp` instead.
 4. Select Direct3D 12 as the active Windows graphics API and restart the Unity
    Editor.
 
@@ -100,6 +107,26 @@ must run before Unity creates the D3D12 device.
 
 After rebuilding the native code, replace the contents of the embedded
 `Packages/top.kuanmi.unityrhi.native` package in the target project.
+
+## Enable Neural Rendering in HDRP
+
+Requires Unity 6.7, HDRP 17.7, Windows x64, Direct3D 12, the embedded native
+package, and a supported NVIDIA GPU/driver with the separately supplied
+`nvngx_dlssnr.dll`.
+
+1. Install the managed UnityRHI and HDRP packages; restart Unity after installing
+   the preloaded native runtime.
+2. Select **Tools > UnityRHI > HDRP > Register Neural Rendering**.
+3. Select **Enable Neural Rendering in Scene Global Volume**, or add the
+   **Post-processing > DLSS Neural Rendering** override to a Volume profile
+   affecting your Game camera and enable it.
+4. Start with one iteration. Use **Neural Rendering Diagnostics** to check NR
+   availability, creation/evaluation results, dropped commands, and device health.
+
+The effect runs After Post Process, after SDR tone mapping. HDR display output,
+XR, Super Resolution, and Frame Generation are outside this adapter's scope.
+See the [HDRP package documentation](Packages/top.kuanmi.dlss.hdrp/README.md)
+for installation and optional Core command-buffer generation fixes.
 
 ## Enable DLSS in URP
 
@@ -132,6 +159,7 @@ Frame Generation:
 - [UnityRHI](Packages/top.kuanmi.unityrhi/README.md)
 - [UnityRHI Native](Packages/top.kuanmi.unityrhi.native/README.md)
 - [DLSS for URP](Packages/top.kuanmi.dlss.urp/README.md)
+- [DLSS Neural Rendering for HDRP](Packages/top.kuanmi.dlss.hdrp/README.md)
 
 ---
 
