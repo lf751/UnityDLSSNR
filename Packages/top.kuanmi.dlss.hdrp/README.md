@@ -70,9 +70,7 @@ applying to a Core package containing your own command-buffer modifications.
 3. Adjust **Post-processing > DLSS Neural Rendering** in that profile.
    Override **Enabled** to toggle it, **Intensity** to adjust it, or
    **Iteration Count** for repeated NR stages. Start with one iteration.
-   **Output Blend** mixes NR with the original tone-mapped image (default 0.65).
-   Reduce it to retain more original detail; set it to 1 for pure NR output or
-   0 for the original image. It does not change native NR intensity or GPU cost.
+   The effect displays the native NR output directly, with no output blend.
 4. Use **Neural Rendering Diagnostics** to inspect native availability, NGX
    results, replay/drop counts, and device health. NGX success is `0x00000001`.
 
@@ -83,11 +81,13 @@ in player builds. No game-specific scenes or profiles are shipped in this packag
 
 ## Behavior and limits
 
-The final NR copy uses exact texels at the destination resolution and preserves
-source alpha. The **Source Color** input debug mode bypasses native evaluation
+NR textures use the source RTHandle's per-pass viewport size, including HDRP's
+upscaled resolution. The final copy maps viewport UVs to NR texels and preserves
+source alpha. This keeps both images aligned when dynamic resolution changes.
+The **Source Color** input debug mode bypasses native evaluation
 and displays the original tone-mapped input for comparison. Enable HDRP camera
-dithering to reduce final 8-bit display quantization. Higher precision and output
-blending can reduce integration-related banding and softness; they do not guarantee
+dithering to reduce final 8-bit display quantization. Higher precision can reduce
+integration-related banding; it does not guarantee
 that the experimental NR model preserves every shadow gradient or fine detail.
 
 Per-camera contexts resize when the post-process resolution changes, reset
@@ -119,8 +119,24 @@ Validated in SCPCB-HDRP with Unity 6000.7.0b2 / HDRP 17.7 / RTX 4060 Ti / D3D12:
 - Standalone player builds, HDR display output, XR, and moving-camera temporal
   quality have not been validated.
 
-Quality update: GPU readback checked alternating pixel edges, original-image
-identity at zero output blend, and the 0.65 blend. Maximum measured RGB error
-was `5.96e-8`. Compilation and shader diagnostics passed, and native evaluation
-remained successful. The reported dark-scene screenshot has not been reproduced
-as a controlled before/after capture for this update.
+Quality update: the active HDRP asset uses 16-bit post-process buffers. The
+experimental output blend has been removed; RGB comes directly from NR.
+The reported dark-scene screenshot has not been reproduced as a controlled
+before/after capture for the precision change.
+
+Viewport fix: the camera's mutable post-process size can still describe the
+pre-upscale image when the After Post Process pass executes. Allocating NR from
+that size produced an inset image when render scale was below 100%. The adapter
+now uses HDRP's per-pass RTHandle viewport and maps the output through viewport
+UVs. A GPU regression check uses a 192-pixel source allocation, a 128-pixel
+viewport, and a 90-pixel NR texture; direct NR output covers the full viewport
+and preserves source alpha. Unity compilation and
+shader diagnostics passed. Live NR reported a 1585 x 823 context matching its
+display viewport, evaluation success `1`, zero dropped streams, and device
+removed reason `0`.
+
+To repeat the copy regression check with the Unity CLI and this package loaded:
+
+```powershell
+unity command run_script --format json -- --file "D:/Path/To/UnityDLSSNR/Tools/VerifyHdrpOutputCopy.cs" --entry Main
+```
