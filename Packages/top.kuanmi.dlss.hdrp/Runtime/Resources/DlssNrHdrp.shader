@@ -11,6 +11,7 @@ Shader "Hidden/UnityRHI/DLSS-NR/HDRP"
     float4 _DlssNrColorScale;
     float4 _DlssNrMotionScale;
     int _DlssNrDebugMode;
+    float _DlssNrOutputBlend;
 
     struct Attributes { uint vertexID : SV_VertexID; UNITY_VERTEX_INPUT_INSTANCE_ID };
     struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
@@ -54,11 +55,17 @@ Shader "Hidden/UnityRHI/DLSS-NR/HDRP"
     }
     float4 Copy(Varyings input) : SV_Target
     {
-        return SAMPLE_TEXTURE2D_LOD(_DlssNrOutput, s_linear_clamp_sampler, input.uv, 0);
+        // NR output and the destination viewport have identical dimensions.
+        // Copy exact texels, then restore original image detail through blending.
+        float4 original = ReadColor(input.uv);
+        float4 processed = LOAD_TEXTURE2D(_DlssNrOutput, uint2(input.positionCS.xy));
+        return float4(lerp(original.rgb, processed.rgb, _DlssNrOutputBlend), original.a);
     }
     float4 DebugInputs(Varyings input) : SV_Target
     {
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+        if (_DlssNrDebugMode == 5)
+            return ReadColor(input.uv);
         uint2 pixel = InputPixel(input.uv);
         if (_DlssNrDebugMode == 1 || _DlssNrDebugMode == 2)
         {

@@ -66,6 +66,7 @@ namespace UnityRhi.Dlss.Hdrp
                 properties.SetTexture("_DlssNrSource", source);
                 properties.SetVector("_DlssNrColorScale", source.rtHandleProperties.rtHandleScale);
                 properties.SetInt("_DlssNrDebugMode", (int)settings.DebugMode);
+                properties.SetFloat("_DlssNrOutputBlend", outputBlend.value);
                 properties.SetVector("_DlssNrMotionScale", new Vector4(-0.5f * width * settings.MotionVectorScale.x,
                     -0.5f * height * settings.MotionVectorScale.y, settings.DebugMotionRange, settings.DebugDepthRange));
 

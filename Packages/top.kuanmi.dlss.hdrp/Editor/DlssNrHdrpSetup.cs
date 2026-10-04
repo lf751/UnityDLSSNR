@@ -45,6 +45,7 @@ namespace UnityRhi.Dlss.Hdrp.Editor
         public static void EnableSceneVolumes()
         {
             Register();
+            UseHighPrecisionPostProcessing();
             foreach (var volume in UnityEngine.Object.FindObjectsByType<Volume>()
                 .Where(v => v.isGlobal && v.weight > 0 && v.sharedProfile != null)
                 .OrderBy(v => v.priority).Take(1))
@@ -65,6 +66,28 @@ namespace UnityRhi.Dlss.Hdrp.Editor
                 EditorUtility.SetDirty(profile);
                 AssetDatabase.SaveAssetIfDirty(profile);
             }
+        }
+
+        [MenuItem("Tools/UnityRHI/HDRP/Use 16-bit Post Process Buffers")]
+        public static void UseHighPrecisionPostProcessing()
+        {
+            var pipeline = GraphicsSettings.currentRenderPipeline as HDRenderPipelineAsset;
+            if (pipeline == null) throw new InvalidOperationException("No active HDRP asset.");
+            var serialized = new SerializedObject(pipeline);
+            var format = serialized.FindProperty("m_RenderPipelineSettings.postProcessSettings.bufferFormat");
+            if (format == null) throw new InvalidOperationException("HDRP post-process buffer format not found.");
+            int highPrecision = (int)UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat;
+            if (format.intValue == highPrecision)
+            {
+                AssetDatabase.SaveAssetIfDirty(pipeline);
+                return;
+            }
+            Undo.RecordObject(pipeline, "Use 16-bit HDRP Post Process Buffers");
+            format.intValue = highPrecision;
+            serialized.ApplyModifiedProperties();
+            EditorUtility.SetDirty(pipeline);
+            AssetDatabase.SaveAssetIfDirty(pipeline);
+            Debug.Log("[UnityRHI.DLSS-NR.HDRP] Active HDRP asset now uses 16-bit post-process buffers to reduce shadow quantization.");
         }
 
         [MenuItem("Tools/UnityRHI/HDRP/Neural Rendering Diagnostics")]

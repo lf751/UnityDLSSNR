@@ -12,6 +12,7 @@ namespace UnityRhi.Dlss.Hdrp
         MotionMagnitude,
         DeviceDepth,
         LinearEyeDepth,
+        SourceColor,
     }
 
     [Serializable]
@@ -50,6 +51,9 @@ namespace UnityRhi.Dlss.Hdrp
 
         [Tooltip("Overall Neural Rendering intensity.")]
         public ClampedFloatParameter intensity = new ClampedFloatParameter(1f, 0f, 2f);
+
+        [Tooltip("Blend the processed image with the original tone-mapped frame. Lower values retain more original detail. This is separate from native NR intensity.")]
+        public ClampedFloatParameter outputBlend = new ClampedFloatParameter(0.65f, 0f, 1f);
 
         public ClampedFloatParameter localToneStrength = new ClampedFloatParameter(1f, 0f, 2f);
         public ClampedFloatParameter localStructureStrength = new ClampedFloatParameter(1f, 0f, 2f);
