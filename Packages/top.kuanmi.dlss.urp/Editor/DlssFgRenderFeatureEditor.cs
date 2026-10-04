@@ -48,11 +48,6 @@ namespace UnityRhi.Dlss.Urp.Editor
                 EditorGUILayout.LabelField("Max generated frames",
                     RhiCore.NgxFrameGenerationMultiFrameCountMax.ToString());
             }
-            EditorGUILayout.HelpBox(
-                "Requires Unity 6.3 URP, Windows x64, Direct3D 12, a standalone Player, " +
-                "and an RTX 40-series or newer GPU/driver. Works with native resolution " +
-                "or UnityRHI DLSS Super Resolution (depth/MV stay at render resolution).",
-                MessageType.Info);
         }
 
         private void AssignDefaultShader()

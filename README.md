@@ -39,7 +39,7 @@ network access during initial CMake configuration.
 ## Download the prebuilt native package
 
 The recommended option is to download
-[`top.kuanmi.unityrhi.native-1.0.2.zip`](https://github.com/Kuan-Mi/UnityDLSSNR/releases/download/v1.0.2/top.kuanmi.unityrhi.native-1.0.2.zip)
+[`top.kuanmi.unityrhi.native-1.0.3.zip`](https://github.com/Kuan-Mi/UnityDLSSNR/releases/download/v1.0.3/top.kuanmi.unityrhi.native-1.0.3.zip)
 from the [latest GitHub Release](https://github.com/Kuan-Mi/UnityDLSSNR/releases/latest).
 It contains the prebuilt Windows x64 native package, so CMake, Visual Studio,
 and the repository build scripts are not required.
@@ -125,7 +125,7 @@ Frame Generation:
 
 1. Add **DLSS Frame Generation** to the Universal Renderer Data.
 2. Keep the pass at **After Rendering Post Processing** and enable it on the feature.
-3. Make a Windows x64 Player build. The Editor Game view does not insert generated frames. F8 toggles FG at runtime.
+3. Make a Windows x64 Player build. The Editor Game view does not insert generated frames.
 
 ## Package documentation
 
@@ -174,7 +174,7 @@ C++ 的桌面开发”工作负载的 Visual Studio 2022，以及首次运行 CM
 
 推荐直接从[最新 GitHub Release](https://github.com/Kuan-Mi/UnityDLSSNR/releases/latest)
 下载
-[`top.kuanmi.unityrhi.native-1.0.2.zip`](https://github.com/Kuan-Mi/UnityDLSSNR/releases/download/v1.0.2/top.kuanmi.unityrhi.native-1.0.2.zip)。
+[`top.kuanmi.unityrhi.native-1.0.3.zip`](https://github.com/Kuan-Mi/UnityDLSSNR/releases/download/v1.0.3/top.kuanmi.unityrhi.native-1.0.3.zip)。
 其中已经包含编译好的 Windows x64 原生包，无需安装 CMake、Visual Studio，
 也无需运行仓库中的构建脚本。
 
@@ -252,7 +252,7 @@ Renderer Feature 会自动请求所需的深度纹理和运动矢量纹理。图
 
 1. 在 Universal Renderer Data 上添加 **DLSS Frame Generation**。
 2. 将渲染阶段保持为 **After Rendering Post Processing**，并在 Feature 上启用。
-3. 打 Windows x64 Player 包。编辑器 Game 视图不会插入生成帧。运行时 F8 可开关 FG。
+3. 打 Windows x64 Player 包。编辑器 Game 视图不会插入生成帧。
 
 ## 各包文档
 
